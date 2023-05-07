@@ -2,14 +2,41 @@ import { Table } from '@/types';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   deleteItem,
+  getAllActivities,
   getAllItems,
+  getAllLogs,
   getItem,
+  getUser,
   insertItem,
+  insertLog,
   updateItem,
 } from './supabase-queries';
 import supabaseClient from './supabase-browser';
 import { useRef } from 'react';
 import { toast } from 'react-hot-toast';
+
+export const useUser = () => {
+  const {
+    data: user,
+    isLoading,
+    isError,
+  } = useQuery(['user'], async () => {
+    return getUser(supabaseClient);
+  });
+
+  return { user, isLoading, isError };
+};
+export const useActivities = () => {
+  const {
+    data: activities,
+    isLoading,
+    isError,
+  } = useQuery<Array<Table<'activities'>>>(['activities'], async () => {
+    return getAllActivities(supabaseClient);
+  });
+
+  return { activities, isLoading, isError };
+};
 
 export const useItems = (initialData: Array<Table<'items'>>) => {
   return useQuery<Array<Table<'items'>>>(
@@ -19,6 +46,48 @@ export const useItems = (initialData: Array<Table<'items'>>) => {
     },
     {
       initialData,
+    }
+  );
+};
+
+export const useInsertLog = ({ onSuccess }: { onSuccess?: () => void }) => {
+  const queryClient = useQueryClient();
+  const toastRef = useRef<string | null>(null);
+  return useMutation(
+    async (log: {
+      start_time: string;
+      end_time: string;
+      activity: string;
+      duration: string;
+      email: string;
+    }) => {
+      // Query the database for overlapping times
+      const allLogs = await getAllLogs(supabaseClient, log);
+      console.log({ allLogs });
+      if (allLogs.length > 0) {
+        throw new Error('Overlaps with existing log');
+      } else {
+        return insertLog(supabaseClient, log);
+      }
+    },
+    {
+      onMutate: () => {
+        const toastId = toast.loading('Logging Activity');
+        toastRef.current = toastId;
+      },
+
+      onSuccess: () => {
+        toast.success('Activity Logged', { id: toastRef.current });
+        toastRef.current = null;
+        queryClient.invalidateQueries(['logs']);
+        onSuccess?.();
+      },
+      onError: (err: Error) => {
+        toast.error(err?.message || 'Failed to create item', {
+          id: toastRef.current,
+        });
+        toastRef.current = null;
+      },
     }
   );
 };

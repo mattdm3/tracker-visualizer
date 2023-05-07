@@ -3,7 +3,8 @@
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "editor.formatOnSave": true,
   "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": true
+    "source.fixAll.eslint": true,
+    "source.fixAll.format": true
   },
   "eslint.codeActionsOnSave.rules": ["!@typescript-eslint/*", "*"],
   "typescript.tsdk": "node_modules/typescript/lib",
@@ -24,7 +25,7 @@
   },
   "typescript.enablePromptUseWorkspaceTsdk": true,
   "[typescriptreact]": {
-    "editor.defaultFormatter": "vscode.typescript-language-features"
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
   "cSpell.words": ["Reflio", "signup"]
 }

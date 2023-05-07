@@ -6,7 +6,7 @@ const queryClient = new QueryClient();
 // This layout component can be used with React state, context and more as it is a client component.
 export const ClientLayout = ({ children }: { children: React.ReactNode }) => {
   return (
-    <div className="max-w-lg mx-auto py-16">
+    <div className="max-w-md mx-auto pb-16 pt-8 px-6 md:px-8">
       <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
       <Toaster />
     </div>

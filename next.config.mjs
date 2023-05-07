@@ -1,4 +1,5 @@
 export default {
+  transpilePackages: ['antd-mobile'],
   experimental: {
     appDir: true,
   },

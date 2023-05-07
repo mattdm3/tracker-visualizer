@@ -1,18 +1,13 @@
-import { AppSupabaseClient } from '@/types';
-import { ItemsList } from './ItemsList';
-import { getAllItems } from './utils/supabase-queries';
-import createClient from './utils/supabase-server';
+'use client';
+import Login from './login';
 
-async function fetchData(supabaseClient: AppSupabaseClient) {
-  return await getAllItems(supabaseClient);
-}
+// do not cache this page
+export const revalidate = 0;
 
-export default async function HomePage() {
-  const supabase = createClient();
-  const initialItems = await fetchData(supabase);
+export default function App() {
   return (
-    <div>
-      <ItemsList initialItems={initialItems} />
-    </div>
+    <>
+      <Login />
+    </>
   );
 }
